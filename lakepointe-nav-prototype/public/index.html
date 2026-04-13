@@ -3,23 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Lake Pointe - Mobile Nav Prototype</title>
+<title>Lake Pointe - Navigation Prototype</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg: #f8f8f8;
+    --bg: #f5f5f5;
     --white: #ffffff;
     --dark: #1a1a2e;
     --accent: #2d6ca3;
+    --accent-hover: #1a5a8a;
     --accent-light: #e8f0f8;
     --text: #333333;
     --text-light: #888888;
     --nav-height: 64px;
     --top-bar-height: 56px;
-    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   body {
@@ -30,17 +30,154 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ===== PHONE FRAME ===== */
-  .phone-frame {
+  /* ===== LAYOUT WRAPPER ===== */
+  .prototype-page {
+    min-height: 100vh;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+  }
+
+  .proto-header {
+    text-align: center;
+  }
+
+  .proto-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #999;
+  }
+
+  .proto-subtitle {
+    font-size: 12px;
+    color: #bbb;
+    margin-top: 4px;
+  }
+
+  .proto-toggle {
+    display: flex;
+    gap: 4px;
+    background: #e4e4e4;
+    border-radius: 10px;
+    padding: 4px;
+    margin-top: 16px;
+  }
+
+  .proto-toggle-btn {
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    color: #888;
+  }
+
+  .proto-toggle-btn.active {
+    background: var(--white);
+    color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+
+  .proto-login-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    font-size: 12px;
+    color: #888;
+  }
+
+  .toggle-switch {
+    width: 40px;
+    height: 22px;
+    background: #ddd;
+    border-radius: 11px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .toggle-switch.on {
+    background: var(--accent);
+  }
+
+  .toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+
+  .toggle-switch.on::after {
+    transform: translateX(18px);
+  }
+
+  /* ===== DEVICE FRAMES ===== */
+  .device-mobile {
     width: 390px;
     height: 844px;
-    margin: 40px auto;
     background: var(--white);
     border-radius: 44px;
     border: 8px solid #1a1a1a;
     overflow: hidden;
     position: relative;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.05);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.18);
+  }
+
+  .device-desktop {
+    width: 1280px;
+    max-width: calc(100vw - 48px);
+    height: 780px;
+    background: var(--white);
+    border-radius: 12px;
+    border: 2px solid #d0d0d0;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.12);
+  }
+
+  .device-desktop .browser-chrome {
+    height: 36px;
+    background: #e8e8e8;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 6px;
+    border-bottom: 1px solid #d0d0d0;
+  }
+
+  .browser-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ccc;
+  }
+
+  .browser-dot.red { background: #ff5f57; }
+  .browser-dot.yellow { background: #febc2e; }
+  .browser-dot.green { background: #28c840; }
+
+  .browser-url {
+    flex: 1;
+    margin-left: 12px;
+    background: var(--white);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 11px;
+    color: #999;
   }
 
   .phone-notch {
@@ -67,7 +204,7 @@
     border-radius: 50%;
   }
 
-  .phone-content {
+  .device-content {
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -76,12 +213,150 @@
     flex-direction: column;
   }
 
-  /* ===== TOP BAR ===== */
-  .top-bar {
-    height: var(--top-bar-height);
-    padding: 0 16px;
-    padding-top: 34px;
+  .device-desktop .device-content {
+    height: calc(100% - 36px);
+  }
+
+  .hidden { display: none !important; }
+
+  /* ===== PROFILE AVATAR ===== */
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent) 0%, #1a4a7a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.15s, box-shadow 0.15s;
+    flex-shrink: 0;
+  }
+
+  .avatar:active { transform: scale(0.92); }
+
+  .avatar-initials {
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.5px;
+  }
+
+  .avatar-ring {
+    position: absolute;
+    inset: -2px;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    opacity: 0.3;
+  }
+
+  .avatar-login {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s, background 0.15s;
+    flex-shrink: 0;
+  }
+
+  .avatar-login:active { transform: scale(0.92); }
+  .avatar-login:hover { background: #e4e4e4; }
+
+  /* ===== PROFILE DROPDOWN ===== */
+  .profile-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 240px;
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04);
+    z-index: 500;
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+    pointer-events: none;
+    transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+    overflow: hidden;
+  }
+
+  .profile-dropdown.open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+
+  .profile-dropdown-header {
+    padding: 16px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .profile-dropdown-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent) 0%, #1a4a7a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .profile-dropdown-avatar .avatar-initials {
+    font-size: 14px;
+  }
+
+  .profile-dropdown-info h4 {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .profile-dropdown-info p {
+    font-size: 11px;
+    color: var(--text-light);
+    margin-top: 1px;
+  }
+
+  .profile-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .profile-dropdown-item:hover {
+    background: var(--bg);
+  }
+
+  .profile-dropdown-item svg {
+    width: 16px;
+    height: 16px;
+    color: var(--text-light);
+  }
+
+  .profile-dropdown-item.danger {
+    color: #d44;
+    border-top: 1px solid rgba(0,0,0,0.06);
+  }
+
+  .profile-dropdown-item.danger svg { color: #d44; }
+
+  /* ===== MOBILE TOP BAR ===== */
+  .m-top-bar {
     height: calc(var(--top-bar-height) + 34px);
+    padding: 34px 14px 0;
     background: var(--white);
     display: flex;
     align-items: center;
@@ -91,75 +366,237 @@
     z-index: 50;
   }
 
-  .top-bar-left {
+  .m-top-bar-left {
     display: flex;
     align-items: center;
-    gap: 12px;
   }
 
-  .top-logo {
-    font-weight: 700;
-    font-size: 15px;
-    letter-spacing: -0.3px;
-    color: var(--dark);
-  }
-
-  .top-logo span {
-    font-weight: 400;
-    color: var(--text-light);
-  }
-
-  .top-bar-right {
+  .m-top-logo {
     display: flex;
     align-items: center;
-    gap: 6px;
   }
 
-  .top-btn {
-    padding: 6px 14px;
+  .m-top-logo svg {
+    height: 28px;
+    width: auto;
+  }
+
+  .m-top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .m-top-btn {
+    padding: 6px 12px;
     border-radius: 20px;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     border: none;
     cursor: pointer;
-    transition: all 0.2s ease;
-    letter-spacing: 0.01em;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+    font-family: inherit;
   }
 
-  .top-btn:active {
-    transform: scale(0.95);
-  }
+  .m-top-btn:active { transform: scale(0.95); }
+  .m-btn-new { background: var(--accent); color: white; }
+  .m-btn-about { background: transparent; color: var(--text); font-weight: 500; }
+  .m-btn-give { background: var(--dark); color: white; }
 
-  .btn-new {
-    background: var(--accent);
-    color: white;
-  }
-
-  .btn-about {
+  .m-btn-icon {
     background: transparent;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
     color: var(--text);
-    font-weight: 500;
-  }
-
-  .btn-give {
-    background: var(--dark);
-    color: white;
-  }
-
-  .btn-search {
-    background: transparent;
-    color: var(--text);
-    padding: 6px 8px;
     display: flex;
     align-items: center;
   }
 
-  /* ===== PAGE CONTENT ===== */
+  /* ===== DESKTOP TOP BAR ===== */
+  .d-top-bar {
+    height: 64px;
+    padding: 0 32px;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    flex-shrink: 0;
+    z-index: 50;
+  }
+
+  .d-top-left {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .d-top-logo {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .d-top-logo svg {
+    height: 32px;
+    width: auto;
+  }
+
+  .d-top-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .d-nav-link {
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .d-nav-link:hover { background: var(--bg); }
+
+  .d-top-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+  }
+
+  .d-btn-cta {
+    padding: 8px 20px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+    letter-spacing: 0.02em;
+  }
+
+  .d-btn-cta:active { transform: scale(0.96); }
+  .d-btn-new { background: var(--accent); color: white; }
+  .d-btn-new:hover { background: var(--accent-hover); }
+  .d-btn-give { background: var(--dark); color: white; }
+  .d-btn-give:hover { background: #2a2a42; }
+
+  .d-btn-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text);
+    transition: background 0.15s;
+  }
+
+  .d-btn-icon:hover { background: var(--bg); }
+
+  .d-btn-menu {
+    padding: 8px 16px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg);
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    font-family: inherit;
+    transition: background 0.15s;
+  }
+
+  .d-btn-menu:hover { background: #eaeaea; }
+
+  /* ===== BOTTOM BAR (mobile only) ===== */
+  .bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(var(--nav-height) + 20px);
+    background: var(--white);
+    border-top: 1px solid rgba(0,0,0,0.06);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-around;
+    padding: 8px 8px 0;
+    z-index: 90;
+    transition: transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .bottom-bar.bar-hidden {
+    transform: translateY(100%);
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 4px 0;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    min-width: 56px;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .nav-item:active { transform: scale(0.9); }
+
+  .nav-item.active .nav-icon { color: var(--accent); }
+  .nav-item.active .nav-label { color: var(--accent); font-weight: 600; }
+
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  .nav-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+    transition: color 0.15s;
+  }
+
+  .nav-icon svg { width: 22px; height: 22px; stroke-width: 1.8; }
+
+  .nav-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-light);
+    transition: color 0.15s;
+  }
+
+  /* ===== PAGE CONTENT (shared) ===== */
   .page-content {
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: calc(var(--nav-height) + 16px);
   }
 
   .hero {
@@ -169,16 +606,20 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding: 24px 20px;
+    padding: 24px;
     overflow: hidden;
+  }
+
+  .device-desktop .hero {
+    height: 360px;
+    padding: 48px;
   }
 
   .hero::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: url("data:image/svg+xml,%3Csvg width='400' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3CradialGradient id='g' cx='30%25' cy='40%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.06'/%3E%3Cstop offset='100%25' stop-color='%23ffffff' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect fill='url(%23g)' width='400' height='300'/%3E%3C/svg%3E");
-    background-size: cover;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 40%, rgba(255,255,255,0.06) 0%, transparent 70%);
   }
 
   .hero-tag {
@@ -200,6 +641,8 @@
     position: relative;
   }
 
+  .device-desktop .hero-title { font-size: 42px; }
+
   .hero-subtitle {
     font-size: 14px;
     color: rgba(255,255,255,0.7);
@@ -208,9 +651,13 @@
     position: relative;
   }
 
+  .device-desktop .hero-subtitle { font-size: 16px; }
+
   .content-section {
-    padding: 24px 20px;
+    padding: 24px;
   }
+
+  .device-desktop .content-section { padding: 32px 48px; }
 
   .section-label {
     font-size: 11px;
@@ -226,7 +673,6 @@
     gap: 12px;
     overflow-x: auto;
     padding-bottom: 4px;
-    -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
   .card-row::-webkit-scrollbar { display: none; }
@@ -239,44 +685,33 @@
     box-shadow: 0 2px 12px rgba(0,0,0,0.06);
     flex-shrink: 0;
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transition: transform 0.15s;
   }
 
-  .card:active {
-    transform: scale(0.97);
-  }
+  .device-desktop .card { min-width: 260px; }
+  .card:active { transform: scale(0.97); }
 
   .card-img {
     height: 110px;
-    background: linear-gradient(135deg, #e8e8e8 0%, #d0d0d0 100%);
     position: relative;
   }
 
-  .card-img.blue { background: linear-gradient(135deg, #2d6ca3 0%, #1a4a7a 100%); }
-  .card-img.warm { background: linear-gradient(135deg, #c4784a 0%, #8a3a2a 100%); }
-  .card-img.green { background: linear-gradient(135deg, #4a8a5c 0%, #2a5a3a 100%); }
+  .device-desktop .card-img { height: 140px; }
+  .card-img.blue { background: linear-gradient(135deg, #2d6ca3, #1a4a7a); }
+  .card-img.warm { background: linear-gradient(135deg, #c4784a, #8a3a2a); }
+  .card-img.green { background: linear-gradient(135deg, #4a8a5c, #2a5a3a); }
 
-  .card-body {
-    padding: 14px;
-  }
-
-  .card-title {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-
-  .card-meta {
-    font-size: 12px;
-    color: var(--text-light);
-  }
+  .card-body { padding: 14px; }
+  .card-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .card-meta { font-size: 12px; color: var(--text-light); }
 
   .quick-links {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
-    margin-top: 4px;
   }
+
+  .device-desktop .quick-links { grid-template-columns: 1fr 1fr 1fr 1fr; }
 
   .quick-link {
     background: var(--white);
@@ -287,12 +722,10 @@
     gap: 12px;
     box-shadow: 0 1px 6px rgba(0,0,0,0.05);
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transition: transform 0.15s;
   }
 
-  .quick-link:active {
-    transform: scale(0.97);
-  }
+  .quick-link:active { transform: scale(0.97); }
 
   .quick-link-icon {
     width: 36px;
@@ -301,7 +734,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
     flex-shrink: 0;
   }
 
@@ -310,99 +742,30 @@
   .ql-warm { background: #fef0e8; color: #c4784a; }
   .ql-green { background: #e8f5ec; color: #4a8a5c; }
 
-  .quick-link-text {
-    font-size: 13px;
-    font-weight: 600;
-  }
+  .quick-link-text { font-size: 13px; font-weight: 600; }
 
-  /* ===== BOTTOM BAR ===== */
-  .bottom-bar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: calc(var(--nav-height) + 20px);
+  .sermon-card {
     background: var(--white);
-    border-top: 1px solid rgba(0,0,0,0.06);
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-around;
-    padding: 8px 8px 0;
-    z-index: 90;
-    transition: transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
-  }
-
-  .bottom-bar.hidden {
-    transform: translateY(100%);
-  }
-
-  .nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 0;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
     cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    min-width: 56px;
-    transition: all 0.2s ease;
-    position: relative;
+    transition: transform 0.15s;
   }
 
-  .nav-item:active {
-    transform: scale(0.9);
-  }
+  .sermon-card:active { transform: scale(0.98); }
 
-  .nav-item.active .nav-icon {
-    color: var(--accent);
-  }
-
-  .nav-item.active .nav-label {
-    color: var(--accent);
-    font-weight: 600;
-  }
-
-  .nav-item.active::before {
-    content: '';
-    position: absolute;
-    top: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 20px;
-    height: 3px;
-    background: var(--accent);
-    border-radius: 2px;
-  }
-
-  .nav-icon {
-    width: 24px;
-    height: 24px;
+  .sermon-img {
+    height: 180px;
+    background: linear-gradient(135deg, #2d6ca3, #1a4a7a);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text-light);
-    transition: color 0.2s ease;
   }
 
-  .nav-icon svg {
-    width: 22px;
-    height: 22px;
-    stroke-width: 1.8;
-  }
+  .device-desktop .sermon-img { height: 240px; }
 
-  .nav-label {
-    font-size: 10px;
-    font-weight: 500;
-    color: var(--text-light);
-    transition: color 0.2s ease;
-    letter-spacing: 0.01em;
-  }
-
-  .nav-item-menu .nav-icon {
-    position: relative;
-  }
-
-  /* ===== FULL SCREEN MENU ===== */
+  /* ===== FULL SCREEN MENU (shared) ===== */
   .fullscreen-menu {
     position: absolute;
     top: 0;
@@ -418,9 +781,15 @@
     padding: 80px 28px 40px;
   }
 
-  .fullscreen-menu.open {
-    transform: translateX(0);
+  .device-desktop .fullscreen-menu {
+    padding: 60px 80px 60px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 60px;
+    align-content: flex-start;
   }
+
+  .fullscreen-menu.open { transform: translateX(0); }
 
   .menu-close {
     position: absolute;
@@ -437,12 +806,14 @@
     z-index: 210;
   }
 
-  .menu-close:hover, .menu-close:active {
-    color: white;
-  }
+  .device-desktop .menu-close { top: 24px; right: 32px; }
+  .menu-close:hover { color: white; }
 
-  .menu-section {
-    margin-bottom: 28px;
+  .menu-section { margin-bottom: 28px; }
+
+  .device-desktop .menu-section {
+    min-width: 200px;
+    margin-bottom: 32px;
   }
 
   .menu-section-title {
@@ -466,10 +837,8 @@
     letter-spacing: -0.3px;
   }
 
-  .menu-link:active, .menu-link:hover {
-    color: white;
-    padding-left: 8px;
-  }
+  .device-desktop .menu-link { font-size: 20px; padding: 6px 0; }
+  .menu-link:hover { color: white; padding-left: 8px; }
 
   .menu-sublink {
     display: block;
@@ -482,10 +851,8 @@
     text-decoration: none;
   }
 
-  .menu-sublink:active, .menu-sublink:hover {
-    color: rgba(255,255,255,0.8);
-    padding-left: 22px;
-  }
+  .device-desktop .menu-sublink { font-size: 14px; }
+  .menu-sublink:hover { color: rgba(255,255,255,0.8); padding-left: 22px; }
 
   .menu-divider {
     height: 1px;
@@ -493,23 +860,24 @@
     margin: 8px 0 28px;
   }
 
+  .device-desktop .menu-divider { display: none; }
+
   /* ===== LOGIN MODAL ===== */
   .modal-overlay {
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
+    inset: 0;
     background: rgba(0,0,0,0.5);
     z-index: 300;
     display: flex;
     align-items: flex-end;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s;
   }
 
-  .modal-overlay.visible {
-    opacity: 1;
-    pointer-events: auto;
-  }
+  .modal-overlay.visible { opacity: 1; pointer-events: auto; }
+
+  .device-desktop .modal-overlay { align-items: center; justify-content: center; }
 
   .modal-sheet {
     background: var(--white);
@@ -520,8 +888,17 @@
     transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
+  .device-desktop .modal-sheet {
+    width: 420px;
+    border-radius: 20px;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s;
+  }
+
   .modal-overlay.visible .modal-sheet {
     transform: translateY(0);
+    opacity: 1;
   }
 
   .modal-handle {
@@ -532,11 +909,12 @@
     margin: 0 auto 20px;
   }
 
+  .device-desktop .modal-handle { display: none; }
+
   .modal-title {
     font-size: 20px;
     font-weight: 700;
     margin-bottom: 6px;
-    letter-spacing: -0.3px;
   }
 
   .modal-desc {
@@ -558,9 +936,7 @@
     transition: border-color 0.2s;
   }
 
-  .modal-input:focus {
-    border-color: var(--accent);
-  }
+  .modal-input:focus { border-color: var(--accent); }
 
   .modal-btn {
     width: 100%;
@@ -577,9 +953,7 @@
     transition: background 0.2s;
   }
 
-  .modal-btn:active {
-    background: #1a5a8a;
-  }
+  .modal-btn:hover { background: var(--accent-hover); }
 
   .modal-skip {
     text-align: center;
@@ -589,108 +963,22 @@
     cursor: pointer;
   }
 
-  .modal-skip:hover {
-    color: var(--text);
-  }
-
-  /* ===== TOAST ===== */
-  .toast {
-    position: absolute;
-    top: 50px;
-    left: 50%;
-    transform: translateX(-50%) translateY(-20px);
-    background: var(--dark);
-    color: white;
-    padding: 12px 20px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 500;
-    z-index: 400;
-    opacity: 0;
-    transition: all 0.3s ease;
-    pointer-events: none;
-    white-space: nowrap;
-  }
-
-  .toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-
-  /* ===== OUTER PAGE ===== */
-  .prototype-wrapper {
-    min-height: 100vh;
-    background: #f0f0f0;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .proto-header {
-    text-align: center;
-    margin-bottom: 12px;
-  }
-
-  .proto-title {
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    color: #666;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-  }
-
-  .proto-subtitle {
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    color: #999;
-    margin-top: 4px;
-  }
-
-  .proto-legend {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    margin-top: 16px;
-    flex-wrap: wrap;
-  }
-
-  .legend-item {
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    color: #888;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .legend-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-  }
-
-  .legend-dot.blue { background: var(--accent); }
-  .legend-dot.dark { background: var(--dark); }
-  .legend-dot.gray { background: #ccc; }
+  .modal-skip:hover { color: var(--text); }
 
   /* ===== SEARCH OVERLAY ===== */
   .search-overlay {
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
+    inset: 0;
     background: rgba(255,255,255,0.97);
     z-index: 250;
     padding: 80px 24px 40px;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.25s ease;
+    transition: opacity 0.2s;
   }
 
-  .search-overlay.visible {
-    opacity: 1;
-    pointer-events: auto;
-  }
+  .device-desktop .search-overlay { padding: 60px 80px; }
+  .search-overlay.visible { opacity: 1; pointer-events: auto; }
 
   .search-bar {
     display: flex;
@@ -700,6 +988,11 @@
     border-radius: 14px;
     padding: 14px 16px;
     margin-bottom: 24px;
+  }
+
+  .device-desktop .search-bar {
+    max-width: 600px;
+    padding: 16px 20px;
   }
 
   .search-bar input {
@@ -717,11 +1010,6 @@
     color: var(--accent);
     font-weight: 600;
     cursor: pointer;
-    padding: 4px;
-  }
-
-  .search-suggestions {
-    padding: 0 4px;
   }
 
   .search-suggestion-label {
@@ -733,354 +1021,532 @@
     margin-bottom: 12px;
   }
 
+  .device-desktop .search-suggestion-label { max-width: 600px; }
+
   .search-suggestion-item {
     padding: 12px 0;
     border-bottom: 1px solid rgba(0,0,0,0.05);
     font-size: 15px;
     color: var(--text);
     cursor: pointer;
+    transition: color 0.15s;
   }
 
-  .search-suggestion-item:active {
-    color: var(--accent);
+  .device-desktop .search-suggestion-item { max-width: 600px; }
+  .search-suggestion-item:hover { color: var(--accent); }
+
+  /* ===== TOAST ===== */
+  .toast {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: var(--dark);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 600;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
   }
+
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
-<div class="prototype-wrapper">
+<div class="prototype-page">
   <div class="proto-header">
     <div class="proto-title">Lake Pointe Church</div>
-    <div class="proto-subtitle">Mobile Navigation Prototype</div>
+    <div class="proto-subtitle">Navigation Prototype &mdash; Mobile &amp; Desktop</div>
+
+    <div class="proto-toggle">
+      <button class="proto-toggle-btn active" onclick="switchView('mobile')">Mobile</button>
+      <button class="proto-toggle-btn" onclick="switchView('desktop')">Desktop</button>
+    </div>
+
+    <div class="proto-login-toggle">
+      <span>Logged out</span>
+      <div class="toggle-switch" id="loginToggle" onclick="toggleLogin()"></div>
+      <span>Logged in</span>
+    </div>
   </div>
 
-  <div class="phone-frame">
+  <!-- ==================== MOBILE ==================== -->
+  <div class="device-mobile" id="mobileDevice">
     <div class="phone-notch"></div>
-    <div class="phone-content">
+    <div class="device-content">
 
-      <!-- TOP BAR -->
-      <div class="top-bar">
-        <div class="top-bar-left">
-          <div class="top-logo">LAKEPOINTE</div>
+      <!-- Mobile Top Bar -->
+      <div class="m-top-bar">
+        <div class="m-top-bar-left">
+          <div class="m-top-logo">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <!-- LP nested diamond mark - 3 concentric rotated squares -->
+              <!-- Outer ring -->
+              <path d="M50 0 L100 50 L50 100 L0 50 Z" fill="#D94E1F"/>
+              <path d="M50 10 L90 50 L50 90 L10 50 Z" fill="white"/>
+              <!-- Middle ring -->
+              <path d="M50 18 L82 50 L50 82 L18 50 Z" fill="#D94E1F"/>
+              <path d="M50 28 L72 50 L50 72 L28 50 Z" fill="white"/>
+              <!-- Inner ring -->
+              <path d="M50 36 L64 50 L50 64 L36 50 Z" fill="#D94E1F"/>
+              <path d="M50 44 L56 50 L50 56 L44 50 Z" fill="white"/>
+            </svg>
+          </div>
         </div>
-        <div class="top-bar-right">
-          <button class="top-btn btn-new" onclick="showToast('Plan a Visit flow')">I'm New</button>
-          <button class="top-btn btn-about" onclick="showToast('About section')">About</button>
-          <button class="top-btn btn-give" onclick="showToast('Giving flow')">Give</button>
-          <button class="top-btn btn-search" onclick="toggleSearch()">
+        <div class="m-top-bar-right">
+          <button class="m-top-btn m-btn-new" onclick="toast('mobileToast','Plan a Visit')">I'm New</button>
+          <button class="m-top-btn m-btn-about" onclick="toast('mobileToast','About')">About</button>
+          <button class="m-top-btn m-btn-give" onclick="toast('mobileToast','Giving flow')">Give</button>
+          <button class="m-btn-icon" onclick="openSearch('mobile')">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           </button>
+          <!-- Logged-in avatar -->
+          <div class="avatar logged-in-only hidden" onclick="toggleProfile('mProfileDrop')">
+            <span class="avatar-initials">PL</span>
+            <div class="avatar-ring"></div>
+            <div class="profile-dropdown" id="mProfileDrop">
+              <div class="profile-dropdown-header">
+                <div class="profile-dropdown-avatar"><span class="avatar-initials">PL</span></div>
+                <div class="profile-dropdown-info">
+                  <h4>Paul Lafata</h4>
+                  <p>Rockwall Campus</p>
+                </div>
+              </div>
+              <div class="profile-dropdown-item" onclick="toast('mobileToast','My Dashboard')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                My Dashboard
+              </div>
+              <div class="profile-dropdown-item" onclick="toast('mobileToast','My Groups')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                My Groups
+              </div>
+              <div class="profile-dropdown-item" onclick="toast('mobileToast','Giving history')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                Giving History
+              </div>
+              <div class="profile-dropdown-item" onclick="toast('mobileToast','Edit profile')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Edit Profile
+              </div>
+              <div class="profile-dropdown-item danger" onclick="toast('mobileToast','Logged out'); toggleLogin()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Log Out
+              </div>
+            </div>
+          </div>
+          <!-- Logged-out avatar -->
+          <div class="avatar-login logged-out-only" onclick="openLogin('mobile')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
         </div>
       </div>
 
-      <!-- PAGE CONTENT -->
-      <div class="page-content" id="pageContent">
+      <!-- Mobile Page Content -->
+      <div class="page-content" id="mobileScroll" style="padding-bottom:100px">
         <div class="hero">
           <div class="hero-tag">This Sunday</div>
           <div class="hero-title">Love Changes<br>Everything</div>
           <div class="hero-subtitle">Join us this weekend across all campuses</div>
         </div>
-
         <div class="content-section">
           <div class="section-label">Quick Links</div>
           <div class="quick-links">
-            <div class="quick-link" onclick="showToast('Groups page')">
-              <div class="quick-link-icon ql-blue">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              </div>
+            <div class="quick-link" onclick="toast('mobileToast','Groups')">
+              <div class="quick-link-icon ql-blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
               <div class="quick-link-text">Groups</div>
             </div>
-            <div class="quick-link" onclick="showToast('Baptism page')">
-              <div class="quick-link-icon ql-warm">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
-              </div>
+            <div class="quick-link" onclick="toast('mobileToast','Baptism')">
+              <div class="quick-link-icon ql-warm"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div>
               <div class="quick-link-text">Baptism</div>
             </div>
-            <div class="quick-link" onclick="showToast('Serve page')">
-              <div class="quick-link-icon ql-green">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-              </div>
+            <div class="quick-link" onclick="toast('mobileToast','Serve')">
+              <div class="quick-link-icon ql-green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
               <div class="quick-link-text">Serve</div>
             </div>
-            <div class="quick-link" onclick="showToast('Prayer request')">
-              <div class="quick-link-icon ql-dark">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-              </div>
+            <div class="quick-link" onclick="toast('mobileToast','Prayer')">
+              <div class="quick-link-icon ql-dark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
               <div class="quick-link-text">Prayer</div>
             </div>
           </div>
         </div>
-
         <div class="content-section" style="padding-top:0">
           <div class="section-label">Upcoming Events</div>
           <div class="card-row">
-            <div class="card" onclick="showToast('Event detail')">
-              <div class="card-img blue"></div>
-              <div class="card-body">
-                <div class="card-title">Summer Blast</div>
-                <div class="card-meta">Jun 14 &middot; All Campuses</div>
-              </div>
-            </div>
-            <div class="card" onclick="showToast('Event detail')">
-              <div class="card-img warm"></div>
-              <div class="card-body">
-                <div class="card-title">SOAR Camp</div>
-                <div class="card-meta">Jul 7-11 &middot; Students</div>
-              </div>
-            </div>
-            <div class="card" onclick="showToast('Event detail')">
-              <div class="card-img green"></div>
-              <div class="card-body">
-                <div class="card-title">Night to Shine</div>
-                <div class="card-meta">Aug 2 &middot; Rockwall</div>
-              </div>
-            </div>
+            <div class="card"><div class="card-img blue"></div><div class="card-body"><div class="card-title">Summer Blast</div><div class="card-meta">Jun 14 &middot; All Campuses</div></div></div>
+            <div class="card"><div class="card-img warm"></div><div class="card-body"><div class="card-title">SOAR Camp</div><div class="card-meta">Jul 7-11 &middot; Students</div></div></div>
+            <div class="card"><div class="card-img green"></div><div class="card-body"><div class="card-title">Night to Shine</div><div class="card-meta">Aug 2 &middot; Rockwall</div></div></div>
           </div>
         </div>
-
         <div class="content-section" style="padding-top:0">
           <div class="section-label">Latest Message</div>
-          <div class="card" style="min-width:auto" onclick="showToast('Sermon player')">
-            <div class="card-img blue" style="height:180px; display:flex; align-items:center; justify-content:center;">
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="white" opacity="0.8"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            </div>
-            <div class="card-body">
-              <div class="card-title">Love Changes Everything - Week 3</div>
-              <div class="card-meta">Josh Howerton &middot; April 13, 2026</div>
-            </div>
+          <div class="sermon-card">
+            <div class="sermon-img"><svg width="48" height="48" viewBox="0 0 24 24" fill="white" opacity="0.8"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+            <div class="card-body"><div class="card-title">Love Changes Everything - Week 3</div><div class="card-meta">Josh Howerton &middot; April 13, 2026</div></div>
           </div>
         </div>
-
-        <div style="height: 20px;"></div>
       </div>
 
-      <!-- BOTTOM BAR -->
-      <div class="bottom-bar" id="bottomBar">
-        <div class="nav-item" id="navLocation" onclick="handleLocationTap()">
-          <div class="nav-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          </div>
+      <!-- Mobile Bottom Bar -->
+      <div class="bottom-bar" id="mobileBottomBar">
+        <div class="nav-item" onclick="openLogin('mobile')">
+          <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
           <span class="nav-label">My Location</span>
         </div>
-        <div class="nav-item" onclick="setActive(this); showToast('Events page')">
-          <div class="nav-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          </div>
+        <div class="nav-item" onclick="setActive(this,'mobile'); toast('mobileToast','Events')">
+          <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
           <span class="nav-label">Events</span>
         </div>
-        <div class="nav-item active" onclick="setActive(this); showToast('Watch page')">
-          <div class="nav-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          </div>
+        <div class="nav-item active" onclick="setActive(this,'mobile'); toast('mobileToast','Watch')">
+          <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
           <span class="nav-label">Watch</span>
         </div>
-        <div class="nav-item" onclick="setActive(this); showToast('Giving flow')">
-          <div class="nav-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          </div>
+        <div class="nav-item" onclick="setActive(this,'mobile'); toast('mobileToast','Give')">
+          <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
           <span class="nav-label">Give</span>
         </div>
-        <div class="nav-item nav-item-menu" onclick="toggleMenu()">
-          <div class="nav-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-          </div>
+        <div class="nav-item" onclick="toggleMenu('mobileMenu')">
+          <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></div>
           <span class="nav-label">Menu</span>
         </div>
       </div>
 
-      <!-- FULL SCREEN MENU -->
-      <div class="fullscreen-menu" id="fullMenu">
-        <div class="menu-close" onclick="toggleMenu()">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </div>
-
-        <div class="menu-section">
-          <a class="menu-link" onclick="menuTap('Plan a Visit')">I'm New</a>
-          <a class="menu-link" onclick="menuTap('About')">About</a>
-          <a class="menu-link" onclick="menuTap('Locations')">Locations</a>
-        </div>
-
+      <!-- Mobile Full Menu -->
+      <div class="fullscreen-menu" id="mobileMenu">
+        <div class="menu-close" onclick="toggleMenu('mobileMenu')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+        <div class="menu-section"><a class="menu-link" onclick="menuTap('mobileMenu','mobileToast','Plan a Visit')">I'm New</a><a class="menu-link" onclick="menuTap('mobileMenu','mobileToast','About')">About</a><a class="menu-link" onclick="menuTap('mobileMenu','mobileToast','Locations')">Locations</a></div>
         <div class="menu-divider"></div>
-
-        <div class="menu-section">
-          <div class="menu-section-title">Next Steps</div>
-          <a class="menu-link" onclick="menuTap('Start Here')">Start Here</a>
-          <a class="menu-link" onclick="menuTap('Groups')">Groups</a>
-          <a class="menu-link" onclick="menuTap('Baptism')">Baptism</a>
-          <a class="menu-sublink" onclick="menuTap('Best News Ever')">Best News Ever</a>
-          <a class="menu-sublink" onclick="menuTap('Next Step Class')">Next Step Class</a>
-        </div>
-
+        <div class="menu-section"><div class="menu-section-title">Next Steps</div><a class="menu-link" onclick="menuTap('mobileMenu','mobileToast','Start Here')">Start Here</a><a class="menu-link" onclick="menuTap('mobileMenu','mobileToast','Groups')">Groups</a><a class="menu-link" onclick="menuTap('mobileMenu','mobileToast','Baptism')">Baptism</a><a class="menu-sublink" onclick="menuTap('mobileMenu','mobileToast','Best News Ever')">Best News Ever</a><a class="menu-sublink" onclick="menuTap('mobileMenu','mobileToast','Next Step Class')">Next Step Class</a></div>
         <div class="menu-divider"></div>
-
-        <div class="menu-section">
-          <div class="menu-section-title">Ministries</div>
-          <a class="menu-link" onclick="menuTap('Kids')">Kids</a>
-          <a class="menu-link" onclick="menuTap('Students')">Students</a>
-          <a class="menu-link" onclick="menuTap('Young Adults')">Young Adults</a>
-          <a class="menu-link" onclick="menuTap('Marriage')">Marriage</a>
-          <a class="menu-sublink" onclick="menuTap('Women in Ministry')">Women in Ministry</a>
-          <a class="menu-sublink" onclick="menuTap('Adoption & Foster Care')">Adoption & Foster Care</a>
-          <a class="menu-sublink" onclick="menuTap('School of Ministry')">School of Ministry</a>
-        </div>
-
+        <div class="menu-section"><div class="menu-section-title">Ministries</div><a class="menu-link" onclick="menuTap('mobileMenu','mobileToast','Kids')">Kids</a><a class="menu-link" onclick="menuTap('mobileMenu','mobileToast','Students')">Students</a><a class="menu-link" onclick="menuTap('mobileMenu','mobileToast','Young Adults')">Young Adults</a><a class="menu-link" onclick="menuTap('mobileMenu','mobileToast','Marriage')">Marriage</a><a class="menu-sublink" onclick="menuTap('mobileMenu','mobileToast','Women in Ministry')">Women in Ministry</a><a class="menu-sublink" onclick="menuTap('mobileMenu','mobileToast','Adoption & Foster Care')">Adoption & Foster Care</a><a class="menu-sublink" onclick="menuTap('mobileMenu','mobileToast','School of Ministry')">School of Ministry</a></div>
         <div class="menu-divider"></div>
-
-        <div class="menu-section">
-          <div class="menu-section-title">Care</div>
-          <a class="menu-link" onclick="menuTap('Counseling')">Counseling</a>
-          <a class="menu-link" onclick="menuTap('Support & Recovery')">Support & Recovery</a>
-          <a class="menu-sublink" onclick="menuTap('Prayer Request')">Prayer Request</a>
-        </div>
-
+        <div class="menu-section"><div class="menu-section-title">Care</div><a class="menu-link" onclick="menuTap('mobileMenu','mobileToast','Counseling')">Counseling</a><a class="menu-link" onclick="menuTap('mobileMenu','mobileToast','Support & Recovery')">Support & Recovery</a><a class="menu-sublink" onclick="menuTap('mobileMenu','mobileToast','Prayer Request')">Prayer Request</a></div>
         <div class="menu-divider"></div>
-
-        <div class="menu-section">
-          <div class="menu-section-title">Serve</div>
-          <a class="menu-link" onclick="menuTap('Serve at Lake Pointe')">Serve</a>
-          <a class="menu-link" onclick="menuTap('Missions')">Missions</a>
-          <a class="menu-sublink" onclick="menuTap('Food Pantry')">Food Pantry</a>
-          <a class="menu-sublink" onclick="menuTap('Hope Bag')">Hope Bag</a>
-        </div>
-
+        <div class="menu-section"><div class="menu-section-title">Serve</div><a class="menu-link" onclick="menuTap('mobileMenu','mobileToast','Serve')">Serve</a><a class="menu-link" onclick="menuTap('mobileMenu','mobileToast','Missions')">Missions</a><a class="menu-sublink" onclick="menuTap('mobileMenu','mobileToast','Food Pantry')">Food Pantry</a><a class="menu-sublink" onclick="menuTap('mobileMenu','mobileToast','Hope Bag')">Hope Bag</a></div>
         <div class="menu-divider"></div>
-
-        <div class="menu-section">
-          <div class="menu-section-title">Watch & Resources</div>
-          <a class="menu-link" onclick="menuTap('Sermons')">Sermons</a>
-          <a class="menu-link" onclick="menuTap('Podcasts')">Podcasts</a>
-          <a class="menu-sublink" onclick="menuTap('Media Room')">Media Room</a>
-          <a class="menu-sublink" onclick="menuTap('Bookstore')">Bookstore</a>
-        </div>
-
+        <div class="menu-section"><div class="menu-section-title">Watch & Resources</div><a class="menu-link" onclick="menuTap('mobileMenu','mobileToast','Sermons')">Sermons</a><a class="menu-link" onclick="menuTap('mobileMenu','mobileToast','Podcasts')">Podcasts</a><a class="menu-sublink" onclick="menuTap('mobileMenu','mobileToast','Media Room')">Media Room</a><a class="menu-sublink" onclick="menuTap('mobileMenu','mobileToast','Bookstore')">Bookstore</a></div>
         <div class="menu-divider"></div>
-
-        <div class="menu-section">
-          <a class="menu-link" onclick="menuTap('Events')">Events</a>
-          <a class="menu-link" onclick="menuTap('Give')">Give</a>
-        </div>
-
-        <div style="height: 40px;"></div>
+        <div class="menu-section"><a class="menu-link" onclick="menuTap('mobileMenu','mobileToast','Events')">Events</a><a class="menu-link" onclick="menuTap('mobileMenu','mobileToast','Give')">Give</a></div>
+        <div style="height:60px"></div>
       </div>
 
-      <!-- LOGIN MODAL -->
-      <div class="modal-overlay" id="loginModal">
-        <div class="modal-sheet">
+      <!-- Mobile Login Modal -->
+      <div class="modal-overlay" id="mobileLoginModal" onclick="closeLogin('mobile')">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
           <div class="modal-handle"></div>
           <div class="modal-title">Find Your Campus</div>
           <div class="modal-desc">Log in to jump straight to your campus home page with personalized content.</div>
           <input class="modal-input" type="email" placeholder="Email address">
           <input class="modal-input" type="password" placeholder="Password">
           <button class="modal-btn" onclick="handleLogin()">Log In</button>
-          <div class="modal-skip" onclick="closeLogin()">Browse without logging in</div>
+          <div class="modal-skip" onclick="closeLogin('mobile')">Browse without logging in</div>
         </div>
       </div>
 
-      <!-- SEARCH OVERLAY -->
-      <div class="search-overlay" id="searchOverlay">
+      <!-- Mobile Search -->
+      <div class="search-overlay" id="mobileSearch">
         <div class="search-bar">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" placeholder="Search Lake Pointe..." id="searchInput">
-          <div class="search-cancel" onclick="toggleSearch()">Cancel</div>
+          <input type="text" placeholder="Search Lake Pointe...">
+          <div class="search-cancel" onclick="closeSearch('mobile')">Cancel</div>
         </div>
-        <div class="search-suggestions">
-          <div class="search-suggestion-label">Popular Searches</div>
-          <div class="search-suggestion-item" onclick="showToast('Service times'); toggleSearch()">Service times</div>
-          <div class="search-suggestion-item" onclick="showToast('Small groups'); toggleSearch()">Small groups</div>
-          <div class="search-suggestion-item" onclick="showToast('Kids ministry'); toggleSearch()">Kids ministry</div>
-          <div class="search-suggestion-item" onclick="showToast('Baptism'); toggleSearch()">Baptism</div>
-          <div class="search-suggestion-item" onclick="showToast('Give'); toggleSearch()">Give online</div>
-          <div class="search-suggestion-item" onclick="showToast('Careers'); toggleSearch()">Careers</div>
-        </div>
+        <div class="search-suggestion-label">Popular Searches</div>
+        <div class="search-suggestion-item" onclick="toast('mobileToast','Service times'); closeSearch('mobile')">Service times</div>
+        <div class="search-suggestion-item" onclick="toast('mobileToast','Small groups'); closeSearch('mobile')">Small groups</div>
+        <div class="search-suggestion-item" onclick="toast('mobileToast','Kids ministry'); closeSearch('mobile')">Kids ministry</div>
+        <div class="search-suggestion-item" onclick="toast('mobileToast','Baptism'); closeSearch('mobile')">Baptism</div>
+        <div class="search-suggestion-item" onclick="toast('mobileToast','Give online'); closeSearch('mobile')">Give online</div>
       </div>
 
-      <!-- TOAST -->
-      <div class="toast" id="toast"></div>
-
+      <div class="toast" id="mobileToast"></div>
     </div>
   </div>
 
-  <div class="proto-legend">
-    <div class="legend-item"><div class="legend-dot blue"></div>Tap bottom bar items</div>
-    <div class="legend-item"><div class="legend-dot dark"></div>Tap Menu for full nav</div>
-    <div class="legend-item"><div class="legend-dot gray"></div>Tap My Location for login</div>
+  <!-- ==================== DESKTOP ==================== -->
+  <div class="device-desktop hidden" id="desktopDevice">
+    <div class="browser-chrome">
+      <div class="browser-dot red"></div>
+      <div class="browser-dot yellow"></div>
+      <div class="browser-dot green"></div>
+      <div class="browser-url">lakepointe.church</div>
+    </div>
+    <div class="device-content">
+
+      <!-- Desktop Top Bar -->
+      <div class="d-top-bar">
+        <div class="d-top-left">
+          <div class="d-top-logo">
+            <svg viewBox="0 0 320 60" xmlns="http://www.w3.org/2000/svg">
+              <!-- Logo Mark - nested diamonds -->
+              <g transform="translate(0,0)">
+                <path d="M30 0 L60 30 L30 60 L0 30 Z" fill="#D94E1F"/>
+                <path d="M30 6 L54 30 L30 54 L6 30 Z" fill="white"/>
+                <path d="M30 11 L49 30 L30 49 L11 30 Z" fill="#D94E1F"/>
+                <path d="M30 17 L43 30 L30 43 L17 30 Z" fill="white"/>
+                <path d="M30 22 L38 30 L30 38 L22 30 Z" fill="#D94E1F"/>
+                <path d="M30 26 L34 30 L30 34 L26 30 Z" fill="white"/>
+              </g>
+              <!-- LAKEPOINTE text -->
+              <text x="68" y="28" font-family="Inter, Arial, sans-serif" font-weight="800" font-size="22" letter-spacing="2" fill="#1a1a2e">LAKEPOINTE</text>
+              <!-- CHURCH text -->
+              <text x="68" y="48" font-family="Inter, Arial, sans-serif" font-weight="600" font-size="14" letter-spacing="4" fill="#1a1a2e">CHURCH</text>
+            </svg>
+          </div>
+          <nav class="d-top-nav">
+            <div class="d-nav-link" onclick="toast('desktopToast','About')">About</div>
+            <div class="d-nav-link" onclick="toast('desktopToast','Locations')">Locations</div>
+            <div class="d-nav-link" onclick="toast('desktopToast','Watch')">Watch</div>
+          </nav>
+        </div>
+        <div class="d-top-right">
+          <button class="d-btn-cta d-btn-new" onclick="toast('desktopToast','Plan a Visit')">I'm New</button>
+          <button class="d-btn-cta d-btn-give" onclick="toast('desktopToast','Giving flow')">Give</button>
+          <button class="d-btn-icon" onclick="openSearch('desktop')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </button>
+
+          <!-- Logged-in avatar (desktop) -->
+          <div class="avatar logged-in-only hidden" onclick="toggleProfile('dProfileDrop')" style="position:relative">
+            <span class="avatar-initials">PL</span>
+            <div class="avatar-ring"></div>
+            <div class="profile-dropdown" id="dProfileDrop">
+              <div class="profile-dropdown-header">
+                <div class="profile-dropdown-avatar"><span class="avatar-initials">PL</span></div>
+                <div class="profile-dropdown-info">
+                  <h4>Paul Lafata</h4>
+                  <p>Rockwall Campus</p>
+                </div>
+              </div>
+              <div class="profile-dropdown-item" onclick="toast('desktopToast','My Dashboard')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                My Dashboard
+              </div>
+              <div class="profile-dropdown-item" onclick="toast('desktopToast','My Groups')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                My Groups
+              </div>
+              <div class="profile-dropdown-item" onclick="toast('desktopToast','Giving history')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                Giving History
+              </div>
+              <div class="profile-dropdown-item" onclick="toast('desktopToast','Edit profile')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Edit Profile
+              </div>
+              <div class="profile-dropdown-item danger" onclick="toast('desktopToast','Logged out'); toggleLogin()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Log Out
+              </div>
+            </div>
+          </div>
+          <!-- Logged-out avatar (desktop) -->
+          <div class="avatar-login logged-out-only" onclick="openLogin('desktop')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+
+          <button class="d-btn-menu" onclick="toggleMenu('desktopMenu')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            Menu
+          </button>
+        </div>
+      </div>
+
+      <!-- Desktop Page Content -->
+      <div class="page-content" id="desktopScroll">
+        <div class="hero">
+          <div class="hero-tag">This Sunday</div>
+          <div class="hero-title">Love Changes<br>Everything</div>
+          <div class="hero-subtitle">Join us this weekend across all campuses</div>
+        </div>
+        <div class="content-section">
+          <div class="section-label">Quick Links</div>
+          <div class="quick-links">
+            <div class="quick-link" onclick="toast('desktopToast','Groups')">
+              <div class="quick-link-icon ql-blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+              <div class="quick-link-text">Groups</div>
+            </div>
+            <div class="quick-link" onclick="toast('desktopToast','Baptism')">
+              <div class="quick-link-icon ql-warm"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div>
+              <div class="quick-link-text">Baptism</div>
+            </div>
+            <div class="quick-link" onclick="toast('desktopToast','Serve')">
+              <div class="quick-link-icon ql-green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+              <div class="quick-link-text">Serve</div>
+            </div>
+            <div class="quick-link" onclick="toast('desktopToast','Prayer')">
+              <div class="quick-link-icon ql-dark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+              <div class="quick-link-text">Prayer</div>
+            </div>
+          </div>
+        </div>
+        <div class="content-section" style="padding-top:0">
+          <div class="section-label">Upcoming Events</div>
+          <div class="card-row">
+            <div class="card"><div class="card-img blue"></div><div class="card-body"><div class="card-title">Summer Blast</div><div class="card-meta">Jun 14 &middot; All Campuses</div></div></div>
+            <div class="card"><div class="card-img warm"></div><div class="card-body"><div class="card-title">SOAR Camp</div><div class="card-meta">Jul 7-11 &middot; Students</div></div></div>
+            <div class="card"><div class="card-img green"></div><div class="card-body"><div class="card-title">Night to Shine</div><div class="card-meta">Aug 2 &middot; Rockwall</div></div></div>
+            <div class="card"><div class="card-img blue"></div><div class="card-body"><div class="card-title">Next Step Class</div><div class="card-meta">Jun 22 &middot; All Campuses</div></div></div>
+          </div>
+        </div>
+        <div class="content-section" style="padding-top:0">
+          <div class="section-label">Latest Message</div>
+          <div class="sermon-card">
+            <div class="sermon-img"><svg width="64" height="64" viewBox="0 0 24 24" fill="white" opacity="0.8"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+            <div class="card-body"><div class="card-title">Love Changes Everything - Week 3</div><div class="card-meta">Josh Howerton &middot; April 13, 2026</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desktop Full Menu -->
+      <div class="fullscreen-menu" id="desktopMenu">
+        <div class="menu-close" onclick="toggleMenu('desktopMenu')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+        <div class="menu-section"><div class="menu-section-title">Welcome</div><a class="menu-link" onclick="menuTap('desktopMenu','desktopToast','Plan a Visit')">I'm New</a><a class="menu-link" onclick="menuTap('desktopMenu','desktopToast','About')">About</a><a class="menu-link" onclick="menuTap('desktopMenu','desktopToast','Locations')">Locations</a></div>
+        <div class="menu-section"><div class="menu-section-title">Next Steps</div><a class="menu-link" onclick="menuTap('desktopMenu','desktopToast','Start Here')">Start Here</a><a class="menu-link" onclick="menuTap('desktopMenu','desktopToast','Groups')">Groups</a><a class="menu-link" onclick="menuTap('desktopMenu','desktopToast','Baptism')">Baptism</a><a class="menu-sublink" onclick="menuTap('desktopMenu','desktopToast','Best News Ever')">Best News Ever</a><a class="menu-sublink" onclick="menuTap('desktopMenu','desktopToast','Next Step Class')">Next Step Class</a></div>
+        <div class="menu-section"><div class="menu-section-title">Ministries</div><a class="menu-link" onclick="menuTap('desktopMenu','desktopToast','Kids')">Kids</a><a class="menu-link" onclick="menuTap('desktopMenu','desktopToast','Students')">Students</a><a class="menu-link" onclick="menuTap('desktopMenu','desktopToast','Young Adults')">Young Adults</a><a class="menu-link" onclick="menuTap('desktopMenu','desktopToast','Marriage')">Marriage</a><a class="menu-sublink" onclick="menuTap('desktopMenu','desktopToast','Women in Ministry')">Women in Ministry</a><a class="menu-sublink" onclick="menuTap('desktopMenu','desktopToast','Adoption & Foster Care')">Adoption & Foster Care</a><a class="menu-sublink" onclick="menuTap('desktopMenu','desktopToast','School of Ministry')">School of Ministry</a></div>
+        <div class="menu-section"><div class="menu-section-title">Care</div><a class="menu-link" onclick="menuTap('desktopMenu','desktopToast','Counseling')">Counseling</a><a class="menu-link" onclick="menuTap('desktopMenu','desktopToast','Support & Recovery')">Support & Recovery</a><a class="menu-sublink" onclick="menuTap('desktopMenu','desktopToast','Prayer Request')">Prayer Request</a></div>
+        <div class="menu-section"><div class="menu-section-title">Serve</div><a class="menu-link" onclick="menuTap('desktopMenu','desktopToast','Serve')">Serve</a><a class="menu-link" onclick="menuTap('desktopMenu','desktopToast','Missions')">Missions</a><a class="menu-sublink" onclick="menuTap('desktopMenu','desktopToast','Food Pantry')">Food Pantry</a><a class="menu-sublink" onclick="menuTap('desktopMenu','desktopToast','Hope Bag')">Hope Bag</a></div>
+        <div class="menu-section"><div class="menu-section-title">Watch & Resources</div><a class="menu-link" onclick="menuTap('desktopMenu','desktopToast','Sermons')">Sermons</a><a class="menu-link" onclick="menuTap('desktopMenu','desktopToast','Podcasts')">Podcasts</a><a class="menu-sublink" onclick="menuTap('desktopMenu','desktopToast','Media Room')">Media Room</a><a class="menu-sublink" onclick="menuTap('desktopMenu','desktopToast','Bookstore')">Bookstore</a></div>
+        <div class="menu-section"><div class="menu-section-title">&nbsp;</div><a class="menu-link" onclick="menuTap('desktopMenu','desktopToast','Events')">Events</a><a class="menu-link" onclick="menuTap('desktopMenu','desktopToast','Give')">Give</a></div>
+      </div>
+
+      <!-- Desktop Login Modal -->
+      <div class="modal-overlay" id="desktopLoginModal" onclick="closeLogin('desktop')">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+          <div class="modal-handle"></div>
+          <div class="modal-title">Find Your Campus</div>
+          <div class="modal-desc">Log in to jump straight to your campus home page with personalized content.</div>
+          <input class="modal-input" type="email" placeholder="Email address">
+          <input class="modal-input" type="password" placeholder="Password">
+          <button class="modal-btn" onclick="handleLogin()">Log In</button>
+          <div class="modal-skip" onclick="closeLogin('desktop')">Browse without logging in</div>
+        </div>
+      </div>
+
+      <!-- Desktop Search -->
+      <div class="search-overlay" id="desktopSearch">
+        <div class="search-bar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Search Lake Pointe...">
+          <div class="search-cancel" onclick="closeSearch('desktop')">Cancel</div>
+        </div>
+        <div class="search-suggestion-label">Popular Searches</div>
+        <div class="search-suggestion-item" onclick="toast('desktopToast','Service times'); closeSearch('desktop')">Service times</div>
+        <div class="search-suggestion-item" onclick="toast('desktopToast','Small groups'); closeSearch('desktop')">Small groups</div>
+        <div class="search-suggestion-item" onclick="toast('desktopToast','Kids ministry'); closeSearch('desktop')">Kids ministry</div>
+        <div class="search-suggestion-item" onclick="toast('desktopToast','Baptism'); closeSearch('desktop')">Baptism</div>
+        <div class="search-suggestion-item" onclick="toast('desktopToast','Give online'); closeSearch('desktop')">Give online</div>
+        <div class="search-suggestion-item" onclick="toast('desktopToast','Careers'); closeSearch('desktop')">Careers</div>
+      </div>
+
+      <div class="toast" id="desktopToast"></div>
+    </div>
   </div>
 </div>
 
 <script>
-  // Bottom bar hide/show on scroll
-  const pageContent = document.getElementById('pageContent');
-  const bottomBar = document.getElementById('bottomBar');
-  let lastScrollTop = 0;
-  let scrollThreshold = 10;
+  let isLoggedIn = false;
+  let currentView = 'mobile';
 
-  pageContent.addEventListener('scroll', () => {
-    const st = pageContent.scrollTop;
-    if (Math.abs(st - lastScrollTop) < scrollThreshold) return;
+  // === View switching ===
+  function switchView(view) {
+    currentView = view;
+    document.querySelectorAll('.proto-toggle-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('mobileDevice').classList.toggle('hidden', view !== 'mobile');
+    document.getElementById('desktopDevice').classList.toggle('hidden', view !== 'desktop');
+    closeAllDropdowns();
+  }
 
-    if (st > lastScrollTop && st > 60) {
-      bottomBar.classList.add('hidden');
-    } else {
-      bottomBar.classList.remove('hidden');
-    }
-    lastScrollTop = st;
-  });
+  // === Login toggle ===
+  function toggleLogin() {
+    isLoggedIn = !isLoggedIn;
+    document.getElementById('loginToggle').classList.toggle('on', isLoggedIn);
+    document.querySelectorAll('.logged-in-only').forEach(el => el.classList.toggle('hidden', !isLoggedIn));
+    document.querySelectorAll('.logged-out-only').forEach(el => el.classList.toggle('hidden', isLoggedIn));
+    closeAllDropdowns();
+  }
 
-  // Nav active state
+  // === Toast ===
+  function toast(id, msg) {
+    const t = document.getElementById(id);
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  // === Bottom bar ===
   function setActive(el) {
-    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+    el.closest('.bottom-bar').querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
     el.classList.add('active');
   }
 
-  // Toast
-  function showToast(message) {
-    const toast = document.getElementById('toast');
-    toast.textContent = message;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 1800);
+  const mobileScroll = document.getElementById('mobileScroll');
+  const mobileBar = document.getElementById('mobileBottomBar');
+  let lastST = 0;
+  mobileScroll.addEventListener('scroll', () => {
+    const st = mobileScroll.scrollTop;
+    if (Math.abs(st - lastST) < 10) return;
+    mobileBar.classList.toggle('bar-hidden', st > lastST && st > 60);
+    lastST = st;
+  });
+
+  // === Full screen menu ===
+  function toggleMenu(id) {
+    document.getElementById(id).classList.toggle('open');
   }
 
-  // Full screen menu
-  function toggleMenu() {
-    const menu = document.getElementById('fullMenu');
-    menu.classList.toggle('open');
+  function menuTap(menuId, toastId, label) {
+    toast(toastId, label);
+    setTimeout(() => document.getElementById(menuId).classList.remove('open'), 400);
   }
 
-  function menuTap(label) {
-    showToast(label);
-    setTimeout(() => toggleMenu(), 400);
+  // === Login modal ===
+  function openLogin(device) {
+    document.getElementById(device + 'LoginModal').classList.add('visible');
   }
 
-  // Login modal (My Location)
-  function handleLocationTap() {
-    document.getElementById('loginModal').classList.add('visible');
+  function closeLogin(device) {
+    document.getElementById(device + 'LoginModal').classList.remove('visible');
   }
 
   function handleLogin() {
-    document.getElementById('loginModal').classList.remove('visible');
-    showToast('Welcome! Redirecting to Rockwall Campus...');
-    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-    document.getElementById('navLocation').classList.add('active');
+    closeLogin('mobile');
+    closeLogin('desktop');
+    if (!isLoggedIn) toggleLogin();
+    const tid = currentView === 'mobile' ? 'mobileToast' : 'desktopToast';
+    toast(tid, 'Welcome Paul! Redirecting to Rockwall Campus...');
   }
 
-  function closeLogin() {
-    document.getElementById('loginModal').classList.remove('visible');
-    showToast('Browse all campuses');
+  // === Search ===
+  function openSearch(device) {
+    document.getElementById(device + 'Search').classList.add('visible');
+    const input = document.querySelector('#' + device + 'Search input[type="text"]');
+    setTimeout(() => input && input.focus(), 200);
   }
 
-  // Close modal on overlay tap
-  document.getElementById('loginModal').addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) closeLogin();
-  });
-
-  // Search overlay
-  function toggleSearch() {
-    const overlay = document.getElementById('searchOverlay');
-    overlay.classList.toggle('visible');
-    if (overlay.classList.contains('visible')) {
-      setTimeout(() => document.getElementById('searchInput').focus(), 300);
-    }
+  function closeSearch(device) {
+    document.getElementById(device + 'Search').classList.remove('visible');
   }
+
+  // === Profile dropdown ===
+  function toggleProfile(id) {
+    event.stopPropagation();
+    const dd = document.getElementById(id);
+    const wasOpen = dd.classList.contains('open');
+    closeAllDropdowns();
+    if (!wasOpen) dd.classList.add('open');
+  }
+
+  function closeAllDropdowns() {
+    document.querySelectorAll('.profile-dropdown').forEach(d => d.classList.remove('open'));
+  }
+
+  document.addEventListener('click', closeAllDropdowns);
 </script>
 
 </body>
